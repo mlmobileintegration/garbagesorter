@@ -32,10 +32,10 @@ IMG_FILE_SRC = '/tmp/saved_image.png'
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 BASE_PATH = path/'models'
-PATH_TO_FROZEN_GRAPH = BASE_PATH + '/graph.pb'
+PATH_TO_FROZEN_GRAPH = BASE_PATH/'graph.pb'
 
 # List of the strings that is used to add correct label for each box.
-PATH_TO_LABELS = BASE_PATH + '/labelmap.pbtxt'
+PATH_TO_LABELS = BASE_PATH/'labelmap.pbtxt'
 
 async def download_file(url, dest):
     if dest.exists(): return
