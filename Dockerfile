@@ -3,14 +3,11 @@ FROM python:3.6-slim-stretch
 RUN apt-get update && apt-get install -y python3-dev gcc \
     && rm -rf /var/lib/apt/lists/*
 
+FROM denismakogon/opencv3-slim:edge
+
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-FROM tensorflow/tensorflow
-
-RUN apt-get update && apt-get install -y \ 
-    python-opencv
+RUN pip install --no-cache-dir --no-cache-dir --upgrade -r requirements.txt
 
 COPY app app/
 
