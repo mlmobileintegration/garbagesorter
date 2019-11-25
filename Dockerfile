@@ -1,5 +1,7 @@
 FROM denismakogon/opencv3-slim:edge
 
+RUN apt-get update && apt-get install make
+
 COPY requirements.txt .
 
 RUN pip install --no-cache --no-cache-dir -r requirements.txt
