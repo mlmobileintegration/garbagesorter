@@ -3,9 +3,11 @@ Keras
 gevent
 pillow
 numpy
+pandas
 h5py
 starlette
 uvicorn
 python-multipart
 aiofiles
 aiohttp
+matplotlib
