@@ -2,7 +2,7 @@ FROM denismakogon/opencv3-slim:edge
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir --no-cache-dir --upgrade -r requirements.txt
+RUN pip install --no-cache --no-cache-dir -r requirements.txt
 
 COPY app app/
 
