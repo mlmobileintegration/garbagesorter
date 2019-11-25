@@ -43,6 +43,8 @@ PATH_TO_FROZEN_GRAPH = BASE_PATH/'graph.pb'
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = BASE_PATH/'labelmap.pbtxt'
 
+print("Frozen Path", PATH_TO_FROZEN_GRAPH)
+print("Label Path", PATH_TO_LABELS)
 async def download_file(url, dest):
     if dest.exists(): return
     async with aiohttp.ClientSession() as session:
@@ -168,6 +170,9 @@ if __name__ == "__main__":
     # Tensorflow part
     ##################################################
     print('Loading the model')
+    print("Frozen Path", PATH_TO_FROZEN_GRAPH)
+    print("Label Path", PATH_TO_LABELS)
+
     graph = load_graph(PATH_TO_FROZEN_GRAPH)
 
     print('Loading the label map')
