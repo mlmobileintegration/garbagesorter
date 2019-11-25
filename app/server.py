@@ -15,9 +15,9 @@ import cv2
 from datetime import datetime
 
 sys.path.append("..")
-from utils import ops as utils_ops
-from utils import label_map_util
-from utils import visualization_utils as vis_util
+from object_detection.utils import ops as utils_ops
+from object_detection.utils import label_map_util
+from object_detection.utils import visualization_utils as vis_util
 
 path = Path(__file__).parent
 model_file_url = 'YOUR MODEL.h5 DIRECT / RAW DOWNLOAD URL HERE!'
