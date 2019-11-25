@@ -10,6 +10,7 @@ from pathlib import Path
 import uvicorn, aiohttp, asyncio
 import base64, sys, numpy as np
 
+import os
 import tensorflow as tf
 import sys
 import cv2
@@ -17,13 +18,22 @@ from datetime import datetime
 
 from PIL import Image
 
-
-
-
+print("Before", os.getcwd())
 sys.path.append("..")
 from object_detection.utils import ops as utils_ops
 from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as vis_util
+
+print("Tensorflow Version : ", tf.__version__)
+print(str(subprocess.check_output(["nvidia-smi", "-L"])) if tf.config.experimental.list_physical_devices("GPU") else "NOT AVAILABLE")
+print(os.listdir())
+
+# patch tf1 into `utils.ops`
+utils_ops.tf = tf.compat.v1
+
+# Patch the location of gfile
+tf.gfile = tf.io.gfile
+
 
 path = Path(__file__).parent
 model_file_url = 'YOUR MODEL.h5 DIRECT / RAW DOWNLOAD URL HERE!'
@@ -38,10 +48,10 @@ IMG_FILE_SRC = '/tmp/saved_image.png'
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
 BASE_PATH = path/'models'
-PATH_TO_FROZEN_GRAPH = BASE_PATH/'graph.pb'
+PATH_TO_FROZEN_GRAPH = '/app/models/frozen_inference_graph.pb'
 
 # List of the strings that is used to add correct label for each box.
-PATH_TO_LABELS = BASE_PATH/'labelmap.pbtxt'
+PATH_TO_LABELS = '/app/models/labelmap.pbtxt'
 
 print("Frozen Path", PATH_TO_FROZEN_GRAPH)
 print("Label Path", PATH_TO_LABELS)
@@ -57,14 +67,14 @@ async def setup_model():
     # await download_file(model_file_url, MODEL_PATH)
     # model = load_model(MODEL_PATH) # Load your Custom trained model
     # model._make_predict_function()
-    model = ResNet50(weights='imagenet') # COMMENT, IF you have Custom trained model
+    #model = ResNet50(weights='imagenet') # COMMENT, IF you have Custom trained model
     return model
 
 # Asynchronous Steps
-loop = asyncio.get_event_loop()
-tasks = [asyncio.ensure_future(setup_model())]
-model = loop.run_until_complete(asyncio.gather(*tasks))[0]
-loop.close()
+#loop = asyncio.get_event_loop()
+#tasks = [asyncio.ensure_future(setup_model())]
+#model = loop.run_until_complete(asyncio.gather(*tasks))[0]
+#loop.close()
 
 @app.route("/upload", methods=["POST"])
 async def upload(request):
@@ -121,11 +131,11 @@ def load_graph(frozen_graph_filename):
     #return graph
     detection_graph = tf.Graph()
     with detection_graph.as_default():
-    od_graph_def = tf.compat.v1.GraphDef()
-    with tf.gfile.GFile(frozen_graph_filename, 'rb') as fid:   
-        serialized_graph = fid.read()
-        od_graph_def.ParseFromString(serialized_graph)
-        tf.import_graph_def(od_graph_def, name='')
+        od_graph_def = tf.compat.v1.GraphDef()
+        with tf.gfile.GFile(frozen_graph_filename, 'rb') as fid:   
+            serialized_graph = fid.read()
+            od_graph_def.ParseFromString(serialized_graph)
+            tf.import_graph_def(od_graph_def, name='')
 
     return detection_graph
 
@@ -212,3 +222,5 @@ if __name__ == "__main__":
     ##################################################
 
     if "serve" in sys.argv: uvicorn.run(app, host="0.0.0.0", port=8080)
+
+#docker build . -t oapi -f Dockerfile

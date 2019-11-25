@@ -1,4 +1,4 @@
-tensorflow
+tensorflow==1.15
 Keras
 gevent
 pillow

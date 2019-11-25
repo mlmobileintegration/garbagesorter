@@ -4,6 +4,8 @@ RUN apt-get update && apt-get install make
 
 COPY requirements.txt .
 
+RUN pip install --upgrade pip
+
 RUN pip install --no-cache --no-cache-dir -r requirements.txt
 
 COPY app app/
