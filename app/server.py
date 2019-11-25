@@ -79,7 +79,10 @@ async def setup_model():
 @app.route("/upload", methods=["POST"])
 async def upload(request):
     data = await request.form()
-    img_bytes = await (data["img"].read())
+    print(data["img"])
+    #img_bytes = await (data["img"].read())
+    #img_bytes = await (data["img"])
+    img_bytes = data["img"]
     bytes = base64.b64decode(img_bytes)
     with open(IMG_FILE_SRC, 'wb') as f: f.write(bytes)
     return model_predict1(IMG_FILE_SRC)
@@ -224,3 +227,4 @@ if __name__ == "__main__":
     if "serve" in sys.argv: uvicorn.run(app, host="0.0.0.0", port=8080)
 
 #docker build . -t oapi -f Dockerfile
+#docker run -p 9000:80 -t angular-webpack
