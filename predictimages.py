@@ -17,10 +17,6 @@ from PIL import Image
 import six.moves.urllib as urllib
 
 
-print(os.getcwd())
-os.chdir('models/research/object_detection')
-print(os.getcwd())
-
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
 from object_detection.utils import ops as utils_ops
@@ -48,15 +44,19 @@ os.chdir('..')
 # Minimmum threshhold
 THRESH_HOLD = 0.55
 
-# What model to download.
-MODEL_NAME = 'object_detection/inference_graph'
 
-# Path to frozen detection graph. This is the actual model that is used for the object detection.
-PATH_TO_FROZEN_GRAPH = MODEL_NAME + '/frozen_inference_graph.pb'
+
 
 # List of the strings that is used to add correct label for each box.
-#PATH_TO_LABELS = os.path.join('models/research/object_detection/data', 'mscoco_label_map.pbtxt')
-PATH_TO_LABELS = os.path.join('object_detection/training', 'labelmap.pbtxt')
+# What model to download.
+MODEL_NAME = 'inference_graph'
+
+# Path to frozen detection graph. This is the actual model that is used for the object detection.
+PATH_TO_FROZEN_GRAPH = '/app/models/frozen_inference_graph.pb'
+
+
+# List of the strings that is used to add correct label for each box.
+PATH_TO_LABELS = '/app/models/labelmap.pbtxt'
 
 #####
 # If you want to test the code with your images, just add path to the images to the TEST_IMAGE_PATHS.
