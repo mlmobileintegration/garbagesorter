@@ -222,18 +222,8 @@ def predict(image_path):
 
     # Save the file into the predictedimages folder for later use
     cv2.imwrite("/app/static/images/predicted.png", image_np)
-    
-    result_html1 = path/'static'/'result1.html'
-    result_html2 = path/'static'/'result2.html'    
-    predicted_html = path/'static'/'predicted.html'
+    detection_graph = None
     predicted = path/'static'/'predict.html'
-    my_string=""
-    #with open("/tmp/predicted.png", "rb") as img_file:
-    #    my_string = str(base64.b64encode(img_file.read()))
-    #    result_html = str(result_html1.open().read()) + my_string[2:-1] + str(result_html2.open().read())
-    #    with open(predicted_html, 'w') as f: f.write(result_html)
-    
-    #static/images/predicted.png
     return HTMLResponse(predicted.open().read())
 
 
@@ -251,31 +241,31 @@ if __name__ == "__main__":
     print('Loading the model')
     print("Frozen Path", PATH_TO_FROZEN_GRAPH)
     print("Label Path", PATH_TO_LABELS)
-    graph = load_graph(PATH_TO_FROZEN_GRAPH)
+    #graph = load_graph(PATH_TO_FROZEN_GRAPH)
 
-    print('Loading the label map')    
-    category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS, use_display_name=True)
-    print(category_index)
+    #print('Loading the label map')    
+    #category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS, use_display_name=True)
+    #print(category_index)
 
-    print('Starting Session')
-    sess = tf.Session(graph=graph)
+    #print('Starting Session')
+    #sess = tf.Session(graph=graph)
 
     # Get handles to input and output tensors
-    tensor_dict = {}
-    with sess:
-        ops = tf.get_default_graph().get_operations()
-        all_tensor_names = {output.name for op in ops for output in op.outputs}
+    #tensor_dict = {}
+    #with sess:
+    #    ops = tf.get_default_graph().get_operations()
+    #    all_tensor_names = {output.name for op in ops for output in op.outputs}
 
-        for key in [
-            'num_detections', 'detection_boxes', 'detection_scores',
-            'detection_classes', 'detection_masks'
-        ]:
-            tensor_name = key + ':0'
-            if tensor_name in all_tensor_names:
-                tensor_dict[key] = tf.get_default_graph().get_tensor_by_name(
-                tensor_name)
+        #for key in [
+        #    'num_detections', 'detection_boxes', 'detection_scores',
+        #    'detection_classes', 'detection_masks'
+        #]:
+        #    tensor_name = key + ':0'
+        #    if tensor_name in all_tensor_names:
+        #        tensor_dict[key] = tf.get_default_graph().get_tensor_by_name(
+        #        tensor_name)
 
-    print(tensor_dict)
+    #print(tensor_dict)
 
     ##################################################
     # END Tensorflow part
