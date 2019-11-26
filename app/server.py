@@ -225,15 +225,14 @@ def predict(image_path):
     
     result_html1 = path/'static'/'result1.html'
     result_html2 = path / 'static' / 'result2.html'
+    predicted_html = path/'static'/'predicted.html'
     my_string=""
     with open("/tmp/predicted.png", "rb") as img_file:
         my_string = str(base64.b64encode(img_file.read()))
-        rrr = my_string[2:-1]
-        #result_html = str(result_html1.open().read() + "data:image/jpeg;base64," + base64.b64encode(img_file.read()) + result_html2.open().read())
-
         result_html = str(result_html1.open().read()) + my_string[2:-1] + str(result_html2.open().read())
+        with open(predicted_html, 'w') as f: f.write(result_html)
     
-    return HTMLResponse(result_html)
+    return HTMLResponse(predicted_html.open().read())
 
 
 

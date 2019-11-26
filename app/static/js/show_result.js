@@ -1,4 +1,3 @@
-alert(x)
 var el = x => document.getElementById(x);
 
 // For Image
