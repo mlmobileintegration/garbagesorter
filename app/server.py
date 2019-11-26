@@ -221,18 +221,20 @@ def predict(image_path):
         line_thickness=8)
 
     # Save the file into the predictedimages folder for later use
-    cv2.imwrite("/tmp/predicted.png", image_np)
+    cv2.imwrite("/app/static/images/predicted.png", image_np)
     
     result_html1 = path/'static'/'result1.html'
-    result_html2 = path / 'static' / 'result2.html'
+    result_html2 = path/'static'/'result2.html'    
     predicted_html = path/'static'/'predicted.html'
+    predicted = path/'static'/'predict.html'
     my_string=""
-    with open("/tmp/predicted.png", "rb") as img_file:
-        my_string = str(base64.b64encode(img_file.read()))
-        result_html = str(result_html1.open().read()) + my_string[2:-1] + str(result_html2.open().read())
-        with open(predicted_html, 'w') as f: f.write(result_html)
+    #with open("/tmp/predicted.png", "rb") as img_file:
+    #    my_string = str(base64.b64encode(img_file.read()))
+    #    result_html = str(result_html1.open().read()) + my_string[2:-1] + str(result_html2.open().read())
+    #    with open(predicted_html, 'w') as f: f.write(result_html)
     
-    return HTMLResponse(predicted_html.open().read())
+    #static/images/predicted.png
+    return HTMLResponse(predicted.open().read())
 
 
 
