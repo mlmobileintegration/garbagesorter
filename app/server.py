@@ -109,7 +109,10 @@ def run_inference_for_single_image(image):
     
     # Run inference
     print("Inference : Sess Running prediction ")
-    output_dict = sess.run(tensor_dict, feed_dict={image_tensor: image})
+    with detection_graph.as_default():
+        with tf.compat.v1.Session() as sess:
+            output_dict = sess.run(tensor_dict, feed_dict={image_tensor: image})
+
     print("Inference : After Sess Running prediction ")
     # all outputs are float32 numpy arrays, so convert types as appropriate
     output_dict['num_detections'] = int(output_dict['num_detections'][0])
@@ -186,7 +189,7 @@ if __name__ == "__main__":
     print(tensor_dict)
 
     print('Starting Session')
-    sess = tf.compat.v1.Session(graph=detection_graph)
+    #sess = tf.compat.v1.Session(graph=detection_graph)
 
     ##################################################
     # END Tensorflow part
@@ -196,3 +199,8 @@ if __name__ == "__main__":
 
 #docker build . -t oapi -f Dockerfile
 #docker run -p 8080:8080 -t oapi  --name oapi
+#docker image ls
+#docker image rm 
+#docker rmi $(docker images -f "dangling=true" -q)
+#docker image rm 1745ebcf8276
+#docker images | ConvertFrom-String | where {$_.P2 -eq "<none>"} | % { docker rmi $_.P3 }
