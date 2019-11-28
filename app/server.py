@@ -5,6 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from pathlib import Path
 import uvicorn, aiohttp, asyncio
 import base64, sys, numpy as np
+import gc
 
 #import os
 import tensorflow as tf
@@ -71,8 +72,11 @@ def form(request):
 async def upload(request):
     data = await request.form()
     img_bytes = data["img"]
-    bytes = base64.b64decode(img_bytes)
+    bytes = base64.b64decode(img_bytes)    
     with open(IMG_FILE_SRC, 'wb') as f: f.write(bytes)
+    del img_bytes
+    del bytes
+    gc.collect()
     return predict(IMG_FILE_SRC)
 
 def load_image_into_numpy_array(image):
@@ -123,7 +127,9 @@ def run_inference_for_single_image(image):
 
     if 'detection_masks' in output_dict:
         output_dict['detection_masks'] = output_dict['detection_masks'][0]
-    
+    del sess
+    del image
+    gc.collect()
     return output_dict
 
 def predict(image_path):
@@ -152,7 +158,11 @@ def predict(image_path):
     # Save the file into the predictedimages folder for later use
     print("Predict : Saving image to file")
     cv2.imwrite("/app/static/images/predicted.png", image_np)
-    predicted = path/'static'/'predict.html'
+    predicted = path / 'static' / 'predict.html'       
+    del image_np_expanded
+    del image_np
+    del image
+    gc.collect()
     return HTMLResponse(predicted.open().read())
 
 
