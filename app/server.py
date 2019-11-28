@@ -195,4 +195,4 @@ if __name__ == "__main__":
     if "serve" in sys.argv: uvicorn.run(app, host="0.0.0.0", port=8080)
 
 #docker build . -t oapi -f Dockerfile
-#docker run -p 8080:8080 -t oapi
+#docker run -p 8080:8080 -t oapi  --name oapi
