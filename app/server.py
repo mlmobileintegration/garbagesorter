@@ -93,6 +93,7 @@ def load_graph(frozen_graph_filename):
     return detection_graph
 
 def run_inference_for_single_image(image):
+    print("Inference : Start")
     if 'detection_masks' in tensor_dict:
         # The following processing is only for single image
         detection_boxes = tf.squeeze(tensor_dict['detection_boxes'], [0])
@@ -101,29 +102,29 @@ def run_inference_for_single_image(image):
         real_num_detection = tf.cast(tensor_dict['num_detections'][0], tf.int32)
         detection_boxes = tf.slice(detection_boxes, [0, 0], [real_num_detection, -1])
         detection_masks = tf.slice(detection_masks, [0, 0, 0], [real_num_detection, -1, -1])
-        detection_masks_reframed = utils_ops.reframe_box_masks_to_image_masks(
-            detection_masks, detection_boxes, image.shape[0], image.shape[1])
-        detection_masks_reframed = tf.cast(
-            tf.greater(detection_masks_reframed, 0.5), tf.uint8)
+        detection_masks_reframed = utils_ops.reframe_box_masks_to_image_masks(detection_masks, detection_boxes, image.shape[0], image.shape[1])
+        detection_masks_reframed = tf.cast(tf.greater(detection_masks_reframed, 0.5), tf.uint8)
         # Follow the convention by adding back the batch dimension
-        tensor_dict['detection_masks'] = tf.expand_dims(
-            detection_masks_reframed, 0)
+        tensor_dict['detection_masks'] = tf.expand_dims(detection_masks_reframed, 0)
     
     # Run inference
+    print("Inference : Sess Running prediction ")
     output_dict = sess.run(tensor_dict, feed_dict={image_tensor: image})
-
+    print("Inference : After Sess Running prediction ")
     # all outputs are float32 numpy arrays, so convert types as appropriate
     output_dict['num_detections'] = int(output_dict['num_detections'][0])
     output_dict['detection_classes'] = output_dict[
         'detection_classes'][0].astype(np.uint8)
     output_dict['detection_boxes'] = output_dict['detection_boxes'][0]
     output_dict['detection_scores'] = output_dict['detection_scores'][0]
+
     if 'detection_masks' in output_dict:
         output_dict['detection_masks'] = output_dict['detection_masks'][0]
+    
     return output_dict
 
 def predict(image_path):
-
+    print("Predict : Loading image")
     image = Image.open(image_path)
     # the array based representation of the image will be used later in order to prepare the
     # result image with boxes and labels on it.
@@ -131,9 +132,10 @@ def predict(image_path):
     # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
     image_np_expanded = np.expand_dims(image_np, axis=0)
     # Actual detection.                      
-
+    print("Predict : Calling Inference")
     output_dict = run_inference_for_single_image(image_np_expanded)
     # Visualization of the results of a detection.
+    print("Predict : Visualized")
     vis_util.visualize_boxes_and_labels_on_image_array(
         image_np,
         output_dict['detection_boxes'],
@@ -145,6 +147,7 @@ def predict(image_path):
         line_thickness=4)
 
     # Save the file into the predictedimages folder for later use
+    print("Predict : Saving image to file")
     cv2.imwrite("/app/static/images/predicted.png", image_np)
     predicted = path/'static'/'predict.html'
     return HTMLResponse(predicted.open().read())
