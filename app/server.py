@@ -74,9 +74,10 @@ async def upload(request):
     img_bytes = data["img"]
     bytes = base64.b64decode(img_bytes)    
     with open(IMG_FILE_SRC, 'wb') as f: f.write(bytes)
+    gc.collect()
     del img_bytes
     del bytes
-    gc.collect()
+    del data    
     return predict(IMG_FILE_SRC)
 
 def load_image_into_numpy_array(image):
@@ -97,8 +98,10 @@ def load_graph(frozen_graph_filename):
     return detection_graph
 
 def run_inference_for_single_image(image):
+    gc.collect()
     print("Inference : Start")
     if 'detection_masks' in tensor_dict:
+        print('Inference : Detection mask')
         # The following processing is only for single image
         detection_boxes = tf.squeeze(tensor_dict['detection_boxes'], [0])
         detection_masks = tf.squeeze(tensor_dict['detection_masks'], [0])
@@ -127,9 +130,11 @@ def run_inference_for_single_image(image):
 
     if 'detection_masks' in output_dict:
         output_dict['detection_masks'] = output_dict['detection_masks'][0]
+    
+    gc.collect()
     del sess
     del image
-    gc.collect()
+    
     return output_dict
 
 def predict(image_path):
@@ -158,13 +163,13 @@ def predict(image_path):
     # Save the file into the predictedimages folder for later use
     print("Predict : Saving image to file")
     cv2.imwrite("/app/static/images/predicted.png", image_np)
-    predicted = path / 'static' / 'predict.html'       
+    predicted = path / 'static' / 'predict.html'
+    gc.collect()
+    del output_dict
     del image_np_expanded
     del image_np
-    del image
-    gc.collect()
+    del image    
     return HTMLResponse(predicted.open().read())
-
 
 
 if __name__ == "__main__":
@@ -197,6 +202,7 @@ if __name__ == "__main__":
             image_tensor = tf.compat.v1.get_default_graph().get_tensor_by_name('image_tensor:0')
     
     print(tensor_dict)
+    del ops
 
     print('Starting Session')
     #sess = tf.compat.v1.Session(graph=detection_graph)
