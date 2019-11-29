@@ -220,3 +220,9 @@ if __name__ == "__main__":
 #docker rmi $(docker images -f "dangling=true" -q)
 #docker image rm 1745ebcf8276
 #docker images | ConvertFrom-String | where {$_.P2 -eq "<none>"} | % { docker rmi $_.P3 }
+
+
+
+#docker build -t garbage .
+#docker tag garbage faisalraza32/garbage
+#docker push faisalraza32/garbage
